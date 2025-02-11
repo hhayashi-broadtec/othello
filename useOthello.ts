@@ -30,6 +30,7 @@ export function useOthello() {
   const [currentPlayer, setCurrentPlayer] = useState<Player>("black")
   const [scores, setScores] = useState({ black: 2, white: 2 })
   const [isAIEnabled, setIsAIEnabled] = useState(false)
+  const [humanPlayer, setHumanPlayer] = useState<Player>("black")
 
   const isValidMove = useCallback(
     (row: number, col: number): boolean => {
@@ -87,11 +88,11 @@ export function useOthello() {
       updateScores(newBoard)
       setCurrentPlayer(currentPlayer === "black" ? "white" : "black")
 
-      if (isAIEnabled) {
+      if (isAIEnabled && currentPlayer !== humanPlayer) {
         makeAIMove()
       }
     },
-    [board, currentPlayer, isValidMove, isAIEnabled],
+    [board, currentPlayer, isValidMove, isAIEnabled, humanPlayer],
   )
 
   const makeAIMove = useCallback(() => {
@@ -125,7 +126,13 @@ export function useOthello() {
 
   const toggleAI = () => {
     setIsAIEnabled(!isAIEnabled)
+    resetGame()
   }
 
-  return { board, currentPlayer, scores, makeMove, resetGame, toggleAI, isAIEnabled }
+  const choosePlayer = (player: Player) => {
+    setHumanPlayer(player)
+    resetGame()
+  }
+
+  return { board, currentPlayer, scores, makeMove, resetGame, toggleAI, isAIEnabled, humanPlayer, choosePlayer }
 }
