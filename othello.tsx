@@ -2,9 +2,16 @@
 
 import { useOthello } from "./hooks/useOthello"
 import { Button } from "@/components/ui/button"
+import { useState } from "react"
 
 export default function Othello() {
   const { board, currentPlayer, scores, makeMove, resetGame, toggleAI, isAIEnabled } = useOthello()
+  const [humanPlayer, setHumanPlayer] = useState<"black" | "white">("black")
+
+  const choosePlayer = (player: "black" | "white") => {
+    setHumanPlayer(player)
+    resetGame()
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
@@ -23,7 +30,7 @@ export default function Othello() {
               key={`${rowIndex}-${colIndex}`}
               className="w-12 h-12 bg-green-600 flex items-center justify-center"
               onClick={() => makeMove(rowIndex, colIndex)}
-              disabled={isAIEnabled && currentPlayer === "white"}
+              disabled={isAIEnabled && currentPlayer !== humanPlayer}
             >
               {cell && <div className={`w-10 h-10 rounded-full ${cell === "black" ? "bg-black" : "bg-white"}`} />}
             </button>
@@ -36,6 +43,14 @@ export default function Othello() {
       <Button onClick={toggleAI} className="mt-4">
         {isAIEnabled ? "AIを無効にする" : "AIを有効にする"}
       </Button>
+      <div className="mt-4">
+        <Button onClick={() => choosePlayer("black")} className="mr-2">
+          黒を選択
+        </Button>
+        <Button onClick={() => choosePlayer("white")}>
+          白を選択
+        </Button>
+      </div>
     </div>
   )
 }
